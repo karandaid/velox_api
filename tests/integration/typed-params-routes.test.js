@@ -10,7 +10,7 @@ import VeloxRouter from '../../lib/core/router.js';
 describe('Integration: Multiple Typed Parameter Routes', () => {
   let server;
   const port = 3051;  // Changed from 3050 to avoid conflicts
-  const baseUrl = `http://localhost:${port}`;
+  const baseUrl = `http://127.0.0.1:${port}`;
   
   beforeAll((done) => {
     const router = new VeloxRouter();

@@ -88,7 +88,7 @@ afterAll((done) => {
 function makeRequest(method, path, body, headers = {}) {
   return new Promise((resolve, reject) => {
     const options = {
-      hostname: 'localhost',
+      hostname: '127.0.0.1',
       port: PORT,
       path,
       method,

@@ -60,7 +60,7 @@ afterAll((done) => {
 function request(method, path, options = {}) {
   return new Promise((resolve) => {
     const req = http.request({
-      hostname: 'localhost',
+      hostname: '127.0.0.1',
       port: PORT,
       path,
       method,

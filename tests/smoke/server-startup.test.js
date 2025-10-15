@@ -24,7 +24,7 @@ afterAll((done) => {
 
 function ping(path = '/health') {
   return new Promise((resolve, reject) => {
-    http.get(`http://localhost:${PORT}${path}`, (res) => {
+    http.get(`http://127.0.0.1:${PORT}${path}`, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => resolve({ statusCode: res.statusCode, body: data }));

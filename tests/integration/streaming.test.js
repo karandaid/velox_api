@@ -64,7 +64,7 @@ function uploadFile(filename, content) {
     const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content);
     
     const req = http.request({
-      hostname: 'localhost',
+      hostname: '127.0.0.1',
       port: PORT,
       path: `/upload/${filename}`,
       method: 'POST',
@@ -91,7 +91,7 @@ function uploadFile(filename, content) {
 
 function downloadFile(filename) {
   return new Promise((resolve, reject) => {
-    http.get(`http://localhost:${PORT}/download/${filename}`, (res) => {
+    http.get(`http://127.0.0.1:${PORT}/download/${filename}`, (res) => {
       const chunks = [];
       res.on('data', chunk => chunks.push(chunk));
       res.on('end', () => {
