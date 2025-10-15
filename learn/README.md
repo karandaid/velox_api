@@ -500,4 +500,4 @@ Apply your knowledge by building:
 
 ---
 
-*Built with ❤️ for performance | VeloxAPI v0.2.0-alpha.3*
+*Built with ❤️ for performance | VeloxAPI v0.3.0*

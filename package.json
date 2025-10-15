@@ -1,6 +1,6 @@
 {
   "name": "veloxapi",
-  "version": "0.2.0-alpha.4",
+  "version": "0.3.0",
   "description": "An ultra-fast, zero-dependency Node.js web framework built entirely with Node.js built-in modules",
   "main": "lib/index.js",
   "type": "module",

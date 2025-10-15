@@ -22,7 +22,7 @@ express@4.18.0
 
 **VeloxAPI** has **ZERO** production dependencies:
 ```
-veloxapi@0.2.0-alpha.1
+veloxapi@0.3.0
 └── (no dependencies)
 ```
 

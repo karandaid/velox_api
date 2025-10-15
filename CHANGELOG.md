@@ -5,6 +5,63 @@ All notable changes to VeloxAPI will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-10-15
+
+### Added
+- **Static File Middleware** - Production-ready static file serving
+  - ETag generation and validation for efficient caching
+  - Cache-Control headers with configurable max-age
+  - Path traversal protection (blocks `..`, null bytes, absolute paths)
+  - Dotfile blocking for security (`.env`, `.git`, etc.)
+  - Index file serving (`index.html`, `index.htm`)
+  - MIME type detection for 28+ file types
+  - Directory listing prevention
+  - Custom 404 handling
+
+- **Rate Limiting Middleware** - Token bucket algorithm implementation
+  - Per-IP rate limiting with configurable windows
+  - Per-route custom limits support
+  - In-memory token store with automatic cleanup
+  - Standard rate limit headers (X-RateLimit-*)
+  - Configurable response handling (429 Too Many Requests)
+  - Window-based token replenishment
+
+- **GitHub Pages Website** - Professional landing page
+  - Modern responsive design with gradient effects
+  - Feature showcase and comparison table
+  - GitHub Sponsors integration
+  - SEO optimization with meta tags
+  - Syntax-highlighted code examples
+  - Custom 404 page
+
+- **Documentation Enhancements**
+  - Complete middleware documentation
+  - Static file serving guide with examples
+  - Rate limiting configuration guide
+  - GitHub Pages setup instructions
+  - Extended roadmap with deployment features
+
+### Changed
+- Project structure reorganized with `/website` directory for GitHub Pages
+- Documentation moved from `/docs` (now technical docs only)
+- Improved test coverage to 254 tests (up from 148)
+- Updated all version references to v0.3.0
+- Enhanced roadmap with cloud deployment plans
+
+### Roadmap Updates
+- **v0.4.0** - Security & Validation (JSON Schema, SSL/TLS, CORS)
+- **v0.5.0** - Performance & Scaling (Compression, WebSockets, Clustering)
+- **v0.6.0** - Cloud & Deployment (Docker, AWS, GCP, Vercel, Netlify)
+- **v0.7.0** - Developer Experience (CLI, TypeScript, Hot Reload)
+- **v1.0.0** - Production Ready (Plugins, Monitoring, Benchmarks)
+
+### Performance
+- Static file middleware with efficient ETag caching
+- Rate limiting with minimal memory overhead
+- All middleware tested for production use
+
+---
+
 ## [0.2.0-alpha.1] - 2025-10-14
 
 ### Added

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VeloxAPI - Ultra-fast, zero-dependency Node.js web framework. Built for performance with radix tree routing, object pooling, and advanced features.">
+    <meta name="keywords" content="nodejs, web framework, performance, zero dependencies, radix tree, api framework">
+    <title>VeloxAPI - Ultra-Fast Zero-Dependency Node.js Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #cbd5e1;
+            --success: #10b981;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--dark-light);
+            color: var(--text);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 60px 0;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: var(--dark-light);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--dark-light);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Code Section */
+        .code-section {
+            padding: 80px 0;
+            background: var(--dark-light);
+        }
+
+        .code-example {
+            background: #0a0f1e;
+            border-radius: 12px;
+            padding: 30px;
+            overflow-x: auto;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            margin-top: 30px;
+        }
+
+        .code-example pre {
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .code-keyword { color: #c792ea; }
+        .code-string { color: #c3e88d; }
+        .code-function { color: #82aaff; }
+        .code-comment { color: #546e7a; }
+
+        /* Comparison Section */
+        .comparison {
+            padding: 80px 0;
+        }
+
+        .comparison-table {
+            background: var(--dark-light);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        th {
+            background: rgba(99, 102, 241, 0.2);
+            font-weight: 600;
+        }
+
+        .check { color: var(--success); font-weight: 700; }
+        .cross { color: #ef4444; font-weight: 700; }
+
+        /* Footer */
+        footer {
+            background: var(--dark-light);
+            padding: 60px 0 30px;
+            text-align: center;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">VeloxAPI</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#code">Quick Start</a></li>
+                <li><a href="#comparison">Comparison</a></li>
+                <li><a href="#sponsor">Sponsor</a></li>
+                <li><a href="https://github.com/karandaid/velox_api" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Ultra-Fast Zero-Dependency Node.js Framework</h1>
+                <p>Built for performance with radix tree routing, object pooling, streaming, and advanced middleware. No external dependencies. Just raw speed.</p>
+                <div class="cta-buttons">
+                    <a href="#code" class="btn btn-primary">Get Started</a>
+                    <a href="https://github.com/karandaid/velox_api" class="btn btn-secondary" target="_blank">View on GitHub</a>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Production Dependencies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">254</div>
+                        <div class="stat-label">Passing Tests (100%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">O(log n)</div>
+                        <div class="stat-label">Route Lookup Speed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Built-in Validators</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Why VeloxAPI?</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">Zero Dependencies</h3>
+                        <p class="feature-desc">Built entirely with Node.js native modules. No external packages, no security vulnerabilities, no bloat.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3 class="feature-title">Radix Tree Routing</h3>
+                        <p class="feature-desc">O(log n) route lookups with intelligent caching. 10x faster than linear search frameworks.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✨</div>
+                        <h3 class="feature-title">Typed Parameters</h3>
+                        <p class="feature-desc">12 built-in validators for automatic route parameter validation. No manual checking needed.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <h3 class="feature-title">Object Pooling</h3>
+                        <p class="feature-desc">Request/Response object pools reduce garbage collection overhead for maximum throughput.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌊</div>
+                        <h3 class="feature-title">True Streaming</h3>
+                        <p class="feature-desc">Constant memory usage with backpressure handling. Stream files of any size efficiently.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3 class="feature-title">Security First</h3>
+                        <p class="feature-desc">Path traversal protection, ETag caching, rate limiting, and secure defaults built-in.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📁</div>
+                        <h3 class="feature-title">Static Files</h3>
+                        <p class="feature-desc">High-performance file serving with ETag caching, MIME detection, and security features.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚦</div>
+                        <h3 class="feature-title">Rate Limiting</h3>
+                        <p class="feature-desc">Token bucket algorithm for smooth rate limiting with per-IP and per-route controls.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <h3 class="feature-title">Route Middleware</h3>
+                        <p class="feature-desc">Express-compatible route-specific middleware for fine-grained control.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="code" class="code-section">
+            <div class="container">
+                <h2 class="section-title">Get Started in Seconds</h2>
+                <div class="code-example">
+                    <pre><code><span class="code-comment">// Install VeloxAPI</span>
+<span class="code-keyword">npm install</span> veloxapi
+
+<span class="code-comment">// Create your first server</span>
+<span class="code-keyword">import</span> { VeloxServer, VeloxRouter } <span class="code-keyword">from</span> <span class="code-string">'veloxapi'</span>;
+
+<span class="code-keyword">const</span> router = <span class="code-keyword">new</span> <span class="code-function">VeloxRouter</span>();
+
+<span class="code-comment">// Note: VeloxAPI uses (res, req) - response first, unlike Express</span>
+<span class="code-comment">// Define routes with typed parameters</span>
+router.<span class="code-function">get</span>(<span class="code-string">'/users/:id=number'</span>, (res, req, query, params) => {
+  res.<span class="code-function">sendJSON</span>({ userId: params.id });
+});
+
+router.<span class="code-function">post</span>(<span class="code-string">'/users'</span>, <span class="code-keyword">async</span> (res, req) => {
+  <span class="code-keyword">const</span> body = <span class="code-keyword">await</span> req.<span class="code-function">getBody</span>();
+  res.<span class="code-function">status</span>(<span class="code-string">201</span>).<span class="code-function">sendJSON</span>({ user: body });
+});
+
+<span class="code-comment">// Start server</span>
+<span class="code-keyword">new</span> <span class="code-function">VeloxServer</span>()
+  .<span class="code-function">setPort</span>(<span class="code-string">3000</span>)
+  .<span class="code-function">setRouter</span>(router)
+  .<span class="code-function">start</span>();
+
+console.<span class="code-function">log</span>(<span class="code-string">'🚀 Server running at http://localhost:3000'</span>);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="comparison">
+            <div class="container">
+                <h2 class="section-title">Framework Comparison</h2>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>VeloxAPI</th>
+                                <th>Express</th>
+                                <th>Fastify</th>
+                                <th>Koa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dependencies</td>
+                                <td><strong>0</strong> <span class="check">✓</span></td>
+                                <td>30+ <span class="cross">✗</span></td>
+                                <td>20+ <span class="cross">✗</span></td>
+                                <td>5+ <span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td>Routing Algorithm</td>
+                                <td>Radix Tree <span class="check">✓</span></td>
+                                <td>Linear <span class="cross">✗</span></td>
+                                <td>Radix Tree <span class="check">✓</span></td>
+                                <td>Linear <span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td>Body Parsing</td>
+                                <td>Lazy <span class="check">✓</span></td>
+                                <td>Eager <span class="cross">✗</span></td>
+                                <td>Eager <span class="cross">✗</span></td>
+                                <td>Plugin</td>
+                            </tr>
+                            <tr>
+                                <td>Typed Validation</td>
+                                <td>Built-in (12 types) <span class="check">✓</span></td>
+                                <td>Manual <span class="cross">✗</span></td>
+                                <td>External</td>
+                                <td>Manual <span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td>Object Pooling</td>
+                                <td>Built-in <span class="check">✓</span></td>
+                                <td>None <span class="cross">✗</span></td>
+                                <td>None <span class="cross">✗</span></td>
+                                <td>None <span class="cross">✗</span></td>
+                            </tr>
+                            <tr>
+                                <td>Streaming</td>
+                                <td>Built-in <span class="check">✓</span></td>
+                                <td>Limited</td>
+                                <td>Plugin</td>
+                                <td>Plugin</td>
+                            </tr>
+                            <tr>
+                                <td>Static Files</td>
+                                <td>Built-in + ETag <span class="check">✓</span></td>
+                                <td>External</td>
+                                <td>External</td>
+                                <td>External</td>
+                            </tr>
+                            <tr>
+                                <td>Rate Limiting</td>
+                                <td>Built-in (Token Bucket) <span class="check">✓</span></td>
+                                <td>External</td>
+                                <td>External</td>
+                                <td>External</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="sponsor" class="features" style="background: var(--dark-light);">
+            <div class="container">
+                <h2 class="section-title">Support VeloxAPI Development</h2>
+                <p style="text-align: center; color: var(--text-muted); max-width: 700px; margin: 0 auto 40px;">
+                    VeloxAPI is free and open-source. Your sponsorship helps maintain and improve the framework, add new features, and provide better documentation.
+                </p>
+                <div style="text-align: center;">
+                    <a href="https://github.com/sponsors/karandaid" class="btn btn-primary" target="_blank">
+                        ❤️ Become a Sponsor
+                    </a>
+                </div>
+                <div style="margin-top: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">☕</div>
+                        <h3 style="font-size: 18px; margin-bottom: 10px;">Buy Me a Coffee</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">One-time support to fuel development</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">🚀</div>
+                        <h3 style="font-size: 18px; margin-bottom: 10px;">Monthly Sponsor</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">Ongoing support for continuous improvement</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">⭐</div>
+                        <h3 style="font-size: 18px; margin-bottom: 10px;">Star on GitHub</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">Free way to show your support</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/karandaid/velox_api" target="_blank">GitHub</a>
+                <a href="https://github.com/karandaid/velox_api/tree/main/docs" target="_blank">Documentation</a>
+                <a href="https://github.com/karandaid/velox_api/tree/main/examples" target="_blank">Examples</a>
+                <a href="https://github.com/karandaid/velox_api/tree/main/learn" target="_blank">Tutorials</a>
+                <a href="https://www.npmjs.com/package/veloxapi" target="_blank">npm</a>
+                <a href="https://github.com/sponsors/karandaid" target="_blank">Sponsor</a>
+            </div>
+            <p class="copyright">&copy; 2025 VeloxAPI. Built with ❤️ for performance.</p>
+        </div>
+    </footer>
+</body>
+</html>

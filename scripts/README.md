@@ -67,7 +67,7 @@ That's it! The script will:
 
 Automatically:
 - Checks npm login
-- Runs full test suite (148 tests)
+- Runs full test suite (254 tests)
 - Detects version type (alpha/beta/stable)
 - Publishes with correct npm tags
 - Makes package public
@@ -106,7 +106,7 @@ Shows:
 
 ## 🚀 Common Workflows
 
-### Publish Alpha Release (Current v0.2.0-alpha.1)
+### Publish Stable Release (Current v0.3.0)
 
 ```bash
 npm login                    # If not already logged in
@@ -172,9 +172,9 @@ npm pack --dry-run
 
 ### Publish Alpha/Beta Releases
 The script automatically detects version tags:
-- `0.2.0-alpha.1` → publishes with `--tag alpha`
-- `0.3.0-beta.1` → publishes with `--tag beta`
-- `1.0.0` → publishes with `--tag latest`
+- `0.3.0` → publishes with `--tag latest`
+- `0.4.0-alpha.1` → publishes with `--tag alpha`
+- `0.4.0-beta.1` → publishes with `--tag beta`
 
 Users can install specific tags:
 ```bash
@@ -237,7 +237,7 @@ Add `"type": "module"` to your package.json:
 ```json
 {
   "name": "veloxapi",
-  "version": "0.2.0-alpha.1",
+  "version": "0.3.0",
   "type": "module"
 }
 ```
