@@ -89,6 +89,66 @@ const secureOnly = (res, req, query, params, data, next) => {
 router.use(secureOnly, '@secure');
 ```
 
+## Route-Specific Middleware (v0.2.0-alpha.3+)
+
+Apply middleware to specific routes only (like Express):
+
+```javascript
+const auth = (res, req, query, params, data, next) => {
+  const token = req.getHeader('authorization');
+  if (!token) {
+    return res.sendError('Unauthorized', 401);
+  }
+  data.user = verifyToken(token);
+  next();
+};
+
+const validateBody = async (res, req, query, params, data, next) => {
+  const body = await req.getBody();
+  if (!body.title || !body.content) {
+    return res.sendError('Missing required fields', 400);
+  }
+  data.body = body;
+  next();
+};
+
+// Middleware before handler
+router.post('/api/posts', auth, validateBody, (res, req, query, params, data) => {
+  // Both auth and validateBody have run
+  // data.user is available (from auth)
+  // data.body is available (from validateBody)
+  
+  res.status(201).sendJSON({
+    post: data.body,
+    author: data.user.name
+  });
+});
+
+// This route has NO middleware
+router.get('/api/public', (res) => {
+  res.sendJSON({ message: 'Public route, no auth required' });
+});
+```
+
+**Benefits:**
+- ✅ Fine-grained control - Middleware only where needed
+- ✅ Express-compatible syntax - Easy migration
+- ✅ Multiple middleware - Chain as many as you need
+- ✅ Performance - Skip middleware for routes that don't need it
+
+**Multiple middleware chaining:**
+```javascript
+router.post('/admin/users', 
+  auth,           // 1. Authenticate
+  checkAdmin,     // 2. Verify admin role
+  validateInput,  // 3. Validate request body
+  (res, req, query, params, data) => {
+    // All middleware have run successfully
+    res.sendJSON({ success: true });
+  }
+);
+```
+
 ## Authentication Middleware
 
 Protect routes with authentication:
@@ -180,9 +240,125 @@ const corsMiddleware = (res, req, query, params, data, next) => {
 router.use(corsMiddleware);
 ```
 
-## Rate Limiting Middleware
+## Static File Serving (v0.2.0-alpha.3+)
 
-Limit requests per IP:
+VeloxAPI includes a high-performance static file middleware with security and caching:
+
+```javascript
+import { VeloxServer, VeloxRouter, staticFiles } from 'veloxapi';
+
+const router = new VeloxRouter();
+
+// Serve static files from 'public' directory
+router.use(staticFiles('./public', {
+  etag: true,           // Enable ETag caching
+  maxAge: 3600,         // Cache-Control: max-age=3600
+  dotfiles: false,      // Block dotfiles (.env, .git)
+  index: ['index.html'] // Default index files
+}));
+
+// API routes work alongside static files
+router.get('/api/status', (res) => {
+  res.sendJSON({ status: 'ok' });
+});
+
+new VeloxServer().setPort(3000).setRouter(router).start();
+```
+
+**Features:**
+- ✅ **ETag caching** - Intelligent browser caching with `If-None-Match`
+- ✅ **Path security** - Blocks `../` traversal and absolute paths
+- ✅ **Dotfile protection** - Prevents access to `.env`, `.git`, etc.
+- ✅ **MIME detection** - Automatic content-type for 28+ file types
+- ✅ **Range requests** - Supports video streaming and partial content
+- ✅ **Custom headers** - Add your own headers to responses
+
+**Directory structure:**
+```
+project/
+├── server.js
+└── public/
+    ├── index.html
+    ├── styles.css
+    ├── script.js
+    └── images/
+        └── logo.png
+```
+
+**Test it:**
+```bash
+curl http://localhost:3000/                    # Serves index.html
+curl http://localhost:3000/styles.css          # Serves CSS with MIME type
+curl -H "If-None-Match: W/\"abc123\"" http://localhost:3000/  # 304 Not Modified
+```
+
+## Rate Limiting (v0.2.0-alpha.3+)
+
+VeloxAPI includes a production-ready rate limiter using the token bucket algorithm:
+
+```javascript
+import { VeloxServer, VeloxRouter, rateLimit, rateLimitRoute } from 'veloxapi';
+
+const router = new VeloxRouter();
+
+// Global rate limit: 100 requests per minute
+router.use(rateLimit({
+  maxRequests: 100,
+  windowMs: 60000,
+  message: 'Too many requests, please try again later.'
+}));
+
+// Stricter limit for specific route: 5 requests per minute
+const apiLimiter = rateLimitRoute('/api/strict', {
+  maxRequests: 5,
+  windowMs: 60000
+});
+
+router.get('/api/strict', apiLimiter, (res) => {
+  res.sendJSON({ message: 'This route is strictly rate limited' });
+});
+
+router.get('/api/normal', (res) => {
+  res.sendJSON({ message: 'This route uses global rate limit' });
+});
+
+new VeloxServer().setPort(3000).setRouter(router).start();
+```
+
+**Features:**
+- ✅ **Token bucket algorithm** - Smooth refill, no burst spikes
+- ✅ **Per-IP tracking** - Automatic IP-based limiting
+- ✅ **Per-route limits** - Different limits for different routes
+- ✅ **Standard headers** - `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+- ✅ **Retry-After** - Tells clients when to retry
+- ✅ **Custom handlers** - Override default error responses
+- ✅ **Automatic cleanup** - Prevents memory leaks
+
+**Response headers:**
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1634567890
+Retry-After: 42  (when rate limited)
+```
+
+**Custom options:**
+```javascript
+router.use(rateLimit({
+  maxRequests: 50,
+  windowMs: 60000,
+  message: 'Slow down!',
+  skipSuccessfulRequests: false,  // Count all requests
+  skipFailedRequests: false,       // Count failed requests too
+  handler: (res, req) => {         // Custom handler
+    res.sendJSON({ error: 'Rate limit exceeded', retryAfter: 60 }, 429);
+  }
+}));
+```
+
+## Basic Rate Limiting (Manual Implementation)
+
+You can also build a simple rate limiter yourself:
 
 ```javascript
 const rateLimits = new Map();
@@ -216,6 +392,12 @@ const rateLimiter = (res, req, query, params, data, next) => {
 
 router.use(rateLimiter);
 ```
+
+**Note:** The built-in `rateLimit()` middleware is preferred for production as it includes:
+- Token bucket algorithm (smoother rate limiting)
+- Automatic memory cleanup
+- Standard HTTP headers
+- Per-route customization
 
 ## Timing Middleware
 

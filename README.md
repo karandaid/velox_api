@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/veloxapi.svg)](https://www.npmjs.com/package/veloxapi)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Tests](https://img.shields.io/badge/tests-148%2F148-success.svg)](./tests)
+[![Tests](https://img.shields.io/badge/tests-254%2F254-success.svg)](./tests)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
 
 VeloxAPI is a high-performance web framework built entirely with Node.js built-in modules. **Zero dependencies**, maximum speed, production-ready.
@@ -42,7 +42,7 @@ fastify@4.x
 ### The VeloxAPI Solution
 
 ```bash
-veloxapi@0.2.0-alpha.1
+veloxapi@0.2.0-alpha.4
 └── (zero dependencies)
 ```
 
@@ -570,6 +570,76 @@ console.log(server.getStats());
 // }
 ```
 
+### 📁 Static File Serving (v0.2.0-alpha.3+)
+
+High-performance file serving with security and caching:
+
+```javascript
+import { VeloxServer, VeloxRouter, staticFiles } from 'veloxapi';
+
+const router = new VeloxRouter();
+
+// Serve static files from 'public' directory
+router.use(staticFiles('./public', {
+  etag: true,           // Enable ETag caching
+  maxAge: 3600,         // Cache-Control: max-age=3600
+  dotfiles: false,      // Block dotfiles (.env, .git)
+  index: ['index.html'] // Default index files
+}));
+
+// API routes work alongside static files
+router.get('/api/status', (res) => {
+  res.sendJSON({ status: 'ok' });
+});
+
+new VeloxServer().setPort(3000).setRouter(router).start();
+```
+
+**Features:**
+- ✅ ETag generation and validation for intelligent caching
+- ✅ Path traversal protection (blocks `../` and absolute paths)
+- ✅ Dotfile blocking (`.env`, `.git` protection)
+- ✅ Automatic MIME type detection (28+ types)
+- ✅ Range request support for streaming
+- ✅ Security-first design
+
+### 🚦 Rate Limiting (v0.2.0-alpha.3+)
+
+Token bucket algorithm for smooth rate limiting:
+
+```javascript
+import { VeloxServer, VeloxRouter, rateLimit, rateLimitRoute } from 'veloxapi';
+
+const router = new VeloxRouter();
+
+// Global rate limit: 100 requests per minute
+router.use(rateLimit({
+  maxRequests: 100,
+  windowMs: 60000,
+  message: 'Too many requests, please try again later.'
+}));
+
+// Stricter limit for specific route: 5 requests per minute
+const apiLimiter = rateLimitRoute('/api/strict', {
+  maxRequests: 5,
+  windowMs: 60000
+});
+
+router.get('/api/strict', apiLimiter, (res) => {
+  res.sendJSON({ message: 'This route is strictly rate limited' });
+});
+
+new VeloxServer().setPort(3000).setRouter(router).start();
+```
+
+**Features:**
+- ✅ Token bucket algorithm (smooth refill, no burst spikes)
+- ✅ Per-IP automatic tracking
+- ✅ Per-route custom limits
+- ✅ Standard rate limit headers (`X-RateLimit-*`)
+- ✅ Automatic cleanup to prevent memory leaks
+- ✅ Custom handlers and skip options
+
 ---
 
 ## 🎓 Learning Path
@@ -579,15 +649,16 @@ Start your VeloxAPI journey with our comprehensive tutorials:
 1. **[Getting Started](./learn/01-getting-started.md)** - Build your first API in 15 minutes
 2. **[Typed Parameters](./learn/02-typed-parameters.md)** - Master automatic validation
 3. **[Body Parsing](./learn/03-body-parsing.md)** - Handle POST/PUT data like a pro
-4. **[Middleware](./learn/04-middleware.md)** - Build reusable logic chains
+4. **[Middleware](./learn/04-middleware.md)** - Build reusable logic chains (includes static files & rate limiting)
 5. **[Performance](./learn/05-performance.md)** - Production optimization tips
+6. **[Authentication & Security](./learn/06-authentication-security.md)** - JWT, sessions, and security best practices
+7. **[File Streaming & Uploads](./learn/07-file-streaming-uploads.md)** - Handle file uploads and streaming
+8. **[Testing Strategies](./learn/08-testing-strategies.md)** - Comprehensive testing with Jest
 
 **More tutorials coming soon:**
-- Authentication & Security
-- File Streaming & Uploads
-- Testing Strategies
 - Deployment & Observability
-- Performance Benchmarking
+- Advanced Performance Benchmarking
+- WebSockets & Real-time
 
 ---
 
@@ -621,11 +692,39 @@ router.put(path, handler);
 router.delete(path, handler);
 router.patch(path, handler);
 
-// Middleware
+// Global middleware
 router.use(middleware);                      // All routes
 router.use(middleware, '@method POST');      // POST only
 router.use(middleware, '@path /api/*');      // Path pattern
 ```
+
+#### Route-Specific Middleware (v0.2.0-alpha.3+)
+
+Apply middleware to individual routes for fine-grained control:
+
+```javascript
+// Single middleware
+router.get('/admin', authMiddleware, adminHandler);
+
+// Multiple middleware (executed in order)
+router.post('/api/posts', 
+  authMiddleware,      // 1. Check authentication
+  validateBody,        // 2. Validate request body
+  createPostHandler    // 3. Handle request
+);
+
+// Mix with global middleware
+router.use(logger);  // Runs on all routes
+router.post('/protected', auth, handler);  // Auth only for this route
+```
+
+**Benefits:**
+- ✅ **Performance** - Skip middleware for routes that don't need it
+- ✅ **Express-compatible** - Easy migration from Express
+- ✅ **Type-safe** - Full TypeScript support
+- ✅ **Flexible** - Mix global and route-specific middleware
+
+**Learn more:** [Middleware Tutorial](./learn/04-middleware.md#route-specific-middleware-v020-alpha3)
 
 ### Response Methods
 

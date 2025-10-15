@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeloxAPI - Static Files Example</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 VeloxAPI Static Files Middleware</h1>
+    <p>This page is served using the static files middleware with ETag caching!</p>
+    
+    <div class="features">
+      <h2>Features</h2>
+      <ul>
+        <li>✅ ETag caching for performance</li>
+        <li>✅ Path traversal protection</li>
+        <li>✅ Automatic MIME type detection</li>
+        <li>✅ Cache-Control headers</li>
+        <li>✅ Index file serving</li>
+        <li>✅ Streaming file delivery</li>
+      </ul>
+    </div>
+    
+    <div class="test">
+      <h2>Test ETag Caching</h2>
+      <p>Refresh this page - the second load should be much faster due to 304 Not Modified!</p>
+      <button onclick="testCache()">Test Cache</button>
+      <pre id="result"></pre>
+    </div>
+  </div>
+  
+  <script src="/app.js"></script>
+</body>
+</html>

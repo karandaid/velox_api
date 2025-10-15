@@ -52,9 +52,11 @@ Welcome to the VeloxAPI tutorials! Learn how to build ultra-fast Node.js APIs fr
 **What you'll learn:**
 - What is middleware and when to use it
 - Middleware annotations (@method, @path, @secure)
+- Route-specific middleware (v0.2.0-alpha.3+)
 - Authentication middleware
-- CORS, rate limiting, logging
-- Error handling middleware
+- **Static file serving with ETag caching**
+- **Rate limiting with token bucket algorithm**
+- CORS, logging, error handling
 - Chain multiple middleware
 
 **Time:** 30 minutes  
@@ -498,4 +500,4 @@ Apply your knowledge by building:
 
 ---
 
-*Built with ❤️ for performance | VeloxAPI v0.2.0-alpha.1*
+*Built with ❤️ for performance | VeloxAPI v0.2.0-alpha.3*
