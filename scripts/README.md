@@ -2,12 +2,42 @@
 
 Simple bash scripts to publish your framework to npm.
 
+## ⚙️ Requirements
+
+**VeloxAPI uses ES Modules** - Make sure your setup meets these requirements:
+
+- ✅ **Node.js 18+** (required)
+- ✅ **package.json with `"type": "module"`** (required for ES modules)
+- ✅ **Dependencies installed** - Run `npm install` in your project directory before publishing
+
+### ⚠️ Important: npm init Creates CommonJS by Default
+
+If you used `npm init` to create a new project, it creates **CommonJS** by default. VeloxAPI requires **ES Modules**.
+
+**Fix this by adding to package.json:**
+```json
+{
+  "type": "module"
+}
+```
+
+Or convert your project to ES modules:
+- Set `"type": "module"` in package.json
+- Use `.mjs` file extensions
+- Use `import/export` instead of `require/module.exports`
+
 ## 📦 Quick Start - Publish to npm
 
-### First Time Only
+### First Time Setup
 
 ```bash
-# 1. Login to npm (one time only)
+# 1. Navigate to your project directory
+cd /path/to/your/veloxapi-project
+
+# 2. Install dependencies (includes jest for testing)
+npm install
+
+# 3. Login to npm (one time only)
 npm login
 ```
 
@@ -157,6 +187,24 @@ npm install veloxapi@beta     # Beta release
 
 ## 🆘 Troubleshooting
 
+### "Cannot find module .../node_modules/.bin/jest"
+
+This means dependencies aren't installed in your project directory.
+
+**Solution:**
+```bash
+# 1. Make sure you're in the RIGHT directory
+cd /path/to/your/veloxapi-project
+
+# 2. Install dependencies
+npm install
+
+# 3. Now publish
+./scripts/npm-publish.sh
+```
+
+**Common mistake:** Running scripts from a different directory that doesn't have `node_modules/`.
+
 ### "Not logged in to npm"
 ```bash
 npm login
@@ -178,6 +226,20 @@ Bump the version first:
 Make scripts executable:
 ```bash
 chmod +x scripts/*.sh
+```
+
+### "SyntaxError: Cannot use import statement outside a module"
+
+Your project isn't configured for ES modules.
+
+**Solution:**
+Add `"type": "module"` to your package.json:
+```json
+{
+  "name": "veloxapi",
+  "version": "0.2.0-alpha.1",
+  "type": "module"
+}
 ```
 
 ---
