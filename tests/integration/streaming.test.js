@@ -51,7 +51,12 @@ afterAll((done) => {
     rmdirSync(UPLOAD_DIR);
   } catch (err) {}
   
-  server.close(done);
+  if (server && server.server) {
+    server.server.closeAllConnections?.(); // Close all keep-alive connections
+    server.close(done);
+  } else {
+    done();
+  }
 });
 
 function uploadFile(filename, content) {

@@ -48,7 +48,12 @@ afterAll((done) => {
     // Files might not exist
   }
 
-  server.close(done);
+  if (server && server.server) {
+    server.server.closeAllConnections?.();
+    server.close(done);
+  } else {
+    done();
+  }
 });
 
 function makeRequest(path) {

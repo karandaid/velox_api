@@ -10,13 +10,14 @@ describe('Validators', () => {
     test('validates number type', () => {
       expect(validateParam('123', 'number')).toBe(true);
       expect(validateParam('abc', 'number')).toBe(false);
-      expect(validateParam('12.34', 'number')).toBe(false);
+      expect(validateParam('12.34', 'number')).toBe(true); // Changed: number now accepts floats
     });
 
     test('validates string type', () => {
+      // String has no validator - it's a wildcard fallback that accepts anything
       expect(validateParam('hello', 'string')).toBe(true);
-      expect(validateParam('hello123', 'string')).toBe(false);
-      expect(validateParam('123', 'string')).toBe(false);
+      expect(validateParam('hello123', 'string')).toBe(true); // Changed: string is wildcard
+      expect(validateParam('123', 'string')).toBe(true); // Changed: string is wildcard
     });
 
     test('validates email type', () => {

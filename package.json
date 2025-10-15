@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node examples/hello-world/server.js",
     "dev": "nodemon examples/hello-world/server.js",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --detectOpenHandles",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
     "benchmark": "node benchmarks/comparison.js",

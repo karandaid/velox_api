@@ -12,7 +12,7 @@ describe('Integration: Multiple Typed Parameter Routes', () => {
   const port = 3051;  // Changed from 3050 to avoid conflicts
   const baseUrl = `http://localhost:${port}`;
   
-  beforeAll(() => {
+  beforeAll((done) => {
     const router = new VeloxRouter();
     
     // Same path, different types - Basic
@@ -153,10 +153,18 @@ describe('Integration: Multiple Typed Parameter Routes', () => {
       .setPort(port)
       .setRouter(router)
       .start();
+    
+    // Wait for server to start
+    setTimeout(done, 100);
   });
   
-  afterAll(() => {
-    server.stop();
+  afterAll((done) => {
+    if (server && server.server) {
+      server.server.closeAllConnections?.(); // Close all keep-alive connections
+      server.stop(done);
+    } else {
+      done();
+    }
   });
   
   describe('Basic type differentiation', () => {

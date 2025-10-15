@@ -49,7 +49,12 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  server.close(done);
+  if (server && server.server) {
+    server.server.closeAllConnections?.();
+    server.close(done);
+  } else {
+    done();
+  }
 });
 
 function request(method, path, options = {}) {
